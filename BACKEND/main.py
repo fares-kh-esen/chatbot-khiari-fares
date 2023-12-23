@@ -9,7 +9,14 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 import string
 # nltk.download('punkt')
+# openai
+import os
+import openai
+# client = OpenAI()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
+from openai import OpenAI
+client = OpenAI()
 
 app = FastAPI()
 
@@ -47,11 +54,8 @@ def analyse_endpoint(analyse_input: AnalyseTexteInput):
     texte = ''.join([char for char in texte if char not in string.punctuation])
     #texte.translate(str.maketrans("", "", string.punctuation))
     print(texte)
-    #erreur:Faute d'orthographe
-    """blob = TextBlob(texte)
-    texte = blob.correct()
-    print(texte.words)
-    print(type(texte.words))"""
+ 
+ 
 
     #tokenisation
     tokens=nltk.word_tokenize(texte)
@@ -66,9 +70,24 @@ def analyse_endpoint(analyse_input: AnalyseTexteInput):
     lemmatizer = WordNetLemmatizer()
     lemmatized_words = [lemmatizer.lemmatize(word) for word in tokens]
     print(lemmatized_words)
+    
     # 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
 
+
+
+  
+
+    completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system",
+          "content": " ".join(lemmatized_words)},
+        # {"role": "user", "content": "Hello!"}
+    ]
+    )
+
+
     
-    return {"msg": analyse_input}
+    return {"msg": completion.choices[0].message}
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)

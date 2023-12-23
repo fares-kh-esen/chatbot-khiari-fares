@@ -1,4 +1,4 @@
-var BTN=document.querySelector("button")
+var BTN=document.querySelector("#sendBtn")
 var TEXTAREA=document.querySelector("#textSpeech")
 var DIV=document.querySelector("#reponse_msg")
 var BTN_MIC=document.querySelector("#bMic")
@@ -14,6 +14,7 @@ BTN.addEventListener("click", chatBot)
 BTN_MIC.addEventListener("click", speechToText)
 //fonction principale
 function chatBot(){
+  alert(0)
     let text=TEXTAREA.value
     //je dois communiquer avec le backend
     var url_backend="http://127.0.0.1:8000/analyse"
