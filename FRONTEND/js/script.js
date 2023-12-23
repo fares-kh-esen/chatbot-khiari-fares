@@ -5,9 +5,10 @@ var BTN_MIC=document.querySelector("#bMic")
 //var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
 var recognition = new webkitSpeechRecognition();
 recognition.continuous = false;
+recognition.interimResults = true; // Obtenez les résultats intermédiaires
 recognition.lang = 'en-US';
-recognition.interimResults = false;
-recognition.maxAlternatives = 1;
+// recognition.interimResults = false;
+// recognition.maxAlternatives = 1;
 //EVENEMENT
 BTN.addEventListener("click", chatBot)
 BTN_MIC.addEventListener("click", speechToText)
@@ -34,21 +35,57 @@ function chatBot(){
         console.warn(e)
     })
 }
-function speechToText(){
-    alert("Je suis speech to text")
-    //1ère partie déclencher l'API Speech To Text
-    recognition.start();
 
-}
 
+// Fonction pour démarrer la reconnaissance vocale
+async function speechToText() {
+    // alert("Je suis speech to text");
+    try {
+      // Commencez la reconnaissance vocale
+    demarrerEnregistrement();
+    await  recognition.start();
+    } catch (error) {
+      console.error('Erreur lors du démarrage de la reconnaissance vocale :', error);
+    }
+  }
 
 recognition.onresult = function(event) {
 
+    let interimTranscript = '';
+    let finalTranscript = '';
+
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        finalTranscript += event.results[i][0].transcript;
+      } else {
+        interimTranscript += event.results[i][0].transcript;
+      }
+    }
+
+    // Display the interim transcript in the modal
+    document.getElementById('transcriptionText').innerHTML = interimTranscript;
+    
     //2ème partie récupérer le texte
     var message = event.results[0][0].transcript;
     console.log('Result received: ' + message + '.');
-     console.log('Confidence: ' + event.results[0][0].confidence);
+    console.log('Confidence: ' + event.results[0][0].confidence);
 
     //3ème partie remplir l'input en utilisant ce texte
-    TEXTAREA.value=message
+    if (event.results[0][0].confidence > 0.6)
+        {TEXTAREA.value=message}
+  }
+  recognition.onend = () => {
+    arreterEnregistrement();
+    console.log('La reconnaissance vocale est terminée.');
+  };
+
+
+  function demarrerEnregistrement() {
+    $('#microphoneModal').modal('show');
+    // Vous pouvez ajouter ici du code pour démarrer l'enregistrement vocal.
+  }
+
+  function arreterEnregistrement() {
+    recognition.stop();
+    $('#microphoneModal').modal('hide');
   }

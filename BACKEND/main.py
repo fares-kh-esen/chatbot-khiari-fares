@@ -44,9 +44,9 @@ def analyse_endpoint(analyse_input: AnalyseTexteInput):
     #miniscule
     texte=(analyse_input.texte).lower()
     #ponctuation
-    texte = ' '.join([char for char in texte if char not in string.punctuation])
+    texte = ''.join([char for char in texte if char not in string.punctuation])
     #texte.translate(str.maketrans("", "", string.punctuation))
-
+    print(texte)
     #erreur:Faute d'orthographe
     """blob = TextBlob(texte)
     texte = blob.correct()
@@ -55,28 +55,20 @@ def analyse_endpoint(analyse_input: AnalyseTexteInput):
 
     #tokenisation
     tokens=nltk.word_tokenize(texte)
-    print(tokens)
+    
 
     #stopwords
     stop_words = set(stopwords.words('english'))
     tokens = [word for word in tokens if word not in stop_words]
-    print(tokens)
-
-
-    
-
-
-    
-
-    #Stemmer & Lemmatization
-    
+ 
+ 
     #porter = PorterStemmer()
     lemmatizer = WordNetLemmatizer()
-    
-    #stemmed_words = [porter.stem(word) for word in tokens]
     lemmatized_words = [lemmatizer.lemmatize(word) for word in tokens]
     print(lemmatized_words)
+    # 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
 
+    
     return {"msg": analyse_input}
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
