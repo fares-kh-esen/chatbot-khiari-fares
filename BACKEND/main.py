@@ -71,18 +71,14 @@ def analyse_endpoint(analyse_input: AnalyseTexteInput):
     lemmatized_words = [lemmatizer.lemmatize(word) for word in tokens]
     print(lemmatized_words)
     
-    # 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
-
-
-
   
 
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system",
-          "content": " ".join(lemmatized_words)},
-        # {"role": "user", "content": "Hello!"}
+        {"role": "system", "content": "You are a computer science university "},
+        {"role": "assistant", "content": "you are speicalized in AI, machine learning and deeplearnning..."},
+        {"role": "user", "content": " ".join(lemmatized_words)},
     ]
     )
 

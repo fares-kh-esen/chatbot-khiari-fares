@@ -13,5 +13,5 @@ completion = client.chat.completions.create(
     {"role": "user", "content": "Hello!"}
   ]
 )
-
+# 
 print(completion.choices[0].message)

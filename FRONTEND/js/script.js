@@ -2,6 +2,8 @@ var BTN=document.querySelector("#sendBtn")
 var TEXTAREA=document.querySelector("#textSpeech")
 var DIV=document.querySelector("#reponse_msg")
 var BTN_MIC=document.querySelector("#bMic")
+var SPINNER=document.querySelector("#spinnerr")
+var history = []
 //var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
 var recognition = new webkitSpeechRecognition();
 recognition.continuous = false;
@@ -14,8 +16,8 @@ BTN.addEventListener("click", chatBot)
 BTN_MIC.addEventListener("click", speechToText)
 //fonction principale
 function chatBot(){
-  alert(0)
     let text=TEXTAREA.value
+    addMessage(text)
     //je dois communiquer avec le backend
     var url_backend="http://127.0.0.1:8000/analyse"
     fetch(url_backend,
@@ -27,14 +29,61 @@ function chatBot(){
             }          
         })
     .then(reponse=>{
+   
+      onFinnishloadMessage()
         reponse.json()
         .then(data=>{
+          let text = JSON.stringify(data.msg.content.replace(/\n/g, "<br />"), null, 2);
             console.log(data)
+            addResponse(text)
         })
     })
     .catch(e=>{
+      onFinnishloadMessage()
         console.warn(e)
     })
+
+
+}
+
+function onloadMessage(){
+  // $('.bi-send').hide()
+  SPINNER.style.display = 'block';
+  BTN.disabled = true;
+
+}
+
+function onFinnishloadMessage(){
+  BTN.disabled = false;
+  SPINNER.style.display = 'none';
+  // $('.bi-send').show()
+  TEXTAREA.value = ''
+}
+
+function addResponse (text){
+  $('.chat-container').append(
+    ` <div class="message user-message">
+    <div class="avatar">
+      <img src="https://via.placeholder.com/40" alt="User Avatar">
+    </div>
+    <div class="message-text">
+       ${text}
+    </div>
+  </div>`
+  );
+}
+function addMessage (text){
+  $('.chat-container').append(
+    `  <div class="message other-message">
+    <div class="message-text">
+     ${text}
+    </div>
+    <div class="avatar">
+      <img src="https://via.placeholder.com/40" alt="Other User Avatar">
+    </div>
+  </div>
+  `
+  );
 }
 
 
